@@ -1,3 +1,2 @@
-# cs6650-norman
-NEU CS6650 Scalable Distributed Systems 
-Initial Testing
+cp -p multiple.result.100.csv /Users/karenorman/Desktop/NEU/CS6650/analystic/
+cp -p single.result.csv /Users/karenorman/Desktop/NEU/CS6650/analystic/
