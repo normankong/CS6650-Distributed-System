@@ -37,4 +37,4 @@ jobs:
         port: ${{ secrets.PORT }}
         key: ${{ secrets.KEY }}
         source: "target/lab3-1.0-SNAPSHOT.war"
-        target: "ec2-user@/usr/share/apache-tomcat-9.0.39/webapps/lab3.war"
+        target: "/usr/share/apache-tomcat-9.0.39/webapps/lab3.war"
