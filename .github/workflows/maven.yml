@@ -30,7 +30,7 @@ jobs:
       run: mvn --file pom.xml compile war:war
 
     - name: Rename artifact
-      run: mv target/lab3-1.0-SNAPSHOT.war lab3.war
+      run: mv target/lab3.war lab3.war
 
     - name: SCP File to AWS
       uses: appleboy/scp-action@master
