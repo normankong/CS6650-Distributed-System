@@ -27,7 +27,7 @@ jobs:
       run: mvn -B package --file pom.xml
       
     - name: Build War File
-      run: mvn --file pom.xmlcompile war:war
+      run: mvn --file pom.xml compile war:war
 
 #     - name: copy file via ssh key
 #       uses: appleboy/scp-action@master
