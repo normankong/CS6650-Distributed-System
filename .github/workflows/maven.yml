@@ -27,7 +27,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
       
-    - name: Build War File
+    - name: Build War File for $ARTIFACT
       run: mvn --file pom.xml compile war:war
 
     - name: Rename artifact
