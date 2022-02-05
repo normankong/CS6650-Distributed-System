@@ -22,5 +22,19 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
+        
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+      
+    - name: Build War File
+      run: mvn --file pom.xmlcompile war:war
+
+#     - name: copy file via ssh key
+#       uses: appleboy/scp-action@master
+#       with:
+#         host: ${{ secrets.HOST }}
+#         username: ${{ secrets.USERNAME }}
+#         port: ${{ secrets.PORT }}
+#         key: ${{ secrets.KEY }}
+#         source: "/home/runner/work/cs6650-norman/cs6650-norman/target/lab3-1.0-SNAPSHOT.jar"
+#         target: "ec2-user@/usr/share/apache-tomcat-9.0.39/webapps/lab3.war"
