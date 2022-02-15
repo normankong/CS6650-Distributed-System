@@ -144,7 +144,7 @@ public class RequestRunner {
           .POST(HttpRequest.BodyPublishers.ofString(requestBody))
           .uri(URI.create(finalURL))
           .setHeader("User-Agent", "Java 11 HttpClient Bot")
-//          .header("Content-Type", "application/json")
+          .header("Content-Type", "application/json")
           .timeout(Duration.ofSeconds(1000))
           .build();
 
