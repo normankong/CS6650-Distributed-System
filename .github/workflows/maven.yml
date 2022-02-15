@@ -22,20 +22,20 @@ jobs:
         cache: maven
         
     - name: Build with Maven
-      working-directory: ./lab4
+      working-directory: lab4
       run: mvn -B package --file pom.xml
 
     - name: Build with Maven
-      working-directory: ./lab4
+      working-directory: lab4
       run: mvn -B package --file pom.xml
       
     - name: Build War File for
-      working-directory: ./lab4
+      working-directory: lab4
       run: mvn --file pom.xml compile war:war
 
     - name: Rename artifact
       working-directory: 
-      run: mv ./lab4/target/lab4.war lab4.war
+      run: mv lab4/target/lab4.war lab4.war
 
     - name: SCP File to AWS
       uses: appleboy/scp-action@master
