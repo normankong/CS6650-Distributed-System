@@ -34,11 +34,10 @@ jobs:
       run: mvn --file pom.xml compile war:war
 
     - name: Rename artifact
-      working-directory: ./lab4
-      run: mv target/lab4.war lab4.war
+      working-directory: 
+      run: mv ./lab4/target/lab4.war lab4.war
 
     - name: SCP File to AWS
-      working-directory: ./lab4
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOST }}
