@@ -22,7 +22,7 @@ jobs:
         cache: maven
         
     - name: Build with Maven
-     working-directory: ./lab4
+      working-directory: ./lab4
       run: mvn -B package --file pom.xml
 
     - name: Build with Maven
