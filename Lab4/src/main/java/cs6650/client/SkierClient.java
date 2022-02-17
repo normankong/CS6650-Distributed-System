@@ -70,13 +70,13 @@ public class SkierClient {
     switch (phase) {
       case 1:
         numThreads = (int) Math.ceil(config.getNumThreads() / 4.0);
-        numRun = (int) Math.ceil(config.getNumRun() * 0.2);
+        numRun = (int) Math.ceil(config.getNumRun() * 0.2) * (config.getNumSkiers() / (config.getNumThreads() / 4));
         startTime = 1;
         endTime = 90;
         break;
       case 2:
         numThreads = (int) Math.ceil(config.getNumThreads());
-        numRun = (int) Math.ceil(config.getNumRun() * 0.6);
+        numRun = (int) Math.ceil(config.getNumRun() * 0.6) * (config.getNumSkiers() / (config.getNumThreads()));
         startTime = 91;
         endTime = 360;
         break;
