@@ -6,7 +6,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
@@ -36,7 +35,7 @@ public class RequestRunner {
     this.url = url;
     this.totalCountDownLatch = new CountDownLatch(this.numThread);
 
-    System.out.printf("Creating %s with thread# %d, numRun %d\n", desc, numThreads, numRun);
+    System.out.printf("Creating %s with thread# %d, numReq %d\n", desc, numThreads, numRun);
   }
 
   /**
@@ -108,27 +107,27 @@ public class RequestRunner {
    */
   private class ThreadRunner extends Thread {
 
-    private static final String URL_PARAM = "/lab4/Skiers/999/seasons/20/days/1/skiers/%SKIER_ID%";
+    private static final String URL_PARAM = "/L4maven_war/skiers/999/seasons/20/days/1/skiers/%SKIER_ID%";
     private final Gson gson = new Gson();
 
     private final String desc;
     private final int skierId;
     private final int time;
-    private final int numRun;
+    private final int numReq;
     private final int numLifts;
     private final String url;
     private final CountDownLatch partialCountDownLatch;
     private final CountDownLatch totalCountDownLatch;
     private HttpClient httpClient = HttpClient.newBuilder()
         .version(HttpClient.Version.HTTP_2)
-        .connectTimeout(Duration.ofSeconds(1000))
+        .connectTimeout(Duration.ofSeconds(2000))
         .build();
 
-    private ThreadRunner(String desc, int skierId, int time, int numRun, int numLifts, String url, CountDownLatch partialCountDownLatch, CountDownLatch totalCountDownLatch) {
+    private ThreadRunner(String desc, int skierId, int time, int numReq, int numLifts, String url, CountDownLatch partialCountDownLatch, CountDownLatch totalCountDownLatch) {
       this.desc = desc;
       this.skierId = skierId;
       this.time = time;
-      this.numRun = numRun;
+      this.numReq = numReq;
       this.numLifts = numLifts;
       this.url = url;
       this.partialCountDownLatch = partialCountDownLatch;
@@ -148,14 +147,14 @@ public class RequestRunner {
           .timeout(Duration.ofSeconds(1000))
           .build();
 
-      for (int i = 0; i < numRun; i++) {
+      for (int i = 0; i < numReq; i++) {
         long before = ReportUtility.getTime();
         String beforeHHMM = ReportUtility.convertTimeHHMMSS(before);
         HttpResponse<String> response = getStringHttpResponse(request);
         long after = ReportUtility.getTime();
         String afterHHMM = ReportUtility.convertTimeHHMMSS(after);
         if (response != null) {
-          ReportUtility.append(desc, String.format("%s,%s,%d,%d,%d,%d,%s,%s,%s", new Date(), "GET", (after - before), response.statusCode(), before, after, beforeHHMM, afterHHMM, skierId));
+          ReportUtility.append(desc, String.format("%s,%s,%d,%d,%d,%d,%s,%s,%s", System.currentTimeMillis(), "GET", (after - before), response.statusCode(), before, after, beforeHHMM, afterHHMM, skierId));
         } else {
           System.err.printf("%s %d is failed with null response\n", desc, skierId);
         }
