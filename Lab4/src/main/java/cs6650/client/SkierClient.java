@@ -29,7 +29,7 @@ public class SkierClient {
 //    int numRun = Integer.parseInt(argv[3]);
 //    String url = argv[4];
 
-    int threadNum = 512;
+    int threadNum = 64;
     int skierNum = 10000;
     int skierLifts = 40;
     int numRun = 20;
@@ -88,7 +88,7 @@ public class SkierClient {
         break;
       case 3:
         numThreads = (int) Math.ceil(config.getNumThreads() / 10.0);
-        numRun = (int) (Math.ceil(config.getNumRun() * 0.1) * config.getNumSkiers() / numThreads);
+        numRun = (int) Math.ceil(config.getNumRun() * 0.1);
         startTime = 361;
         endTime = 420;
         break;
