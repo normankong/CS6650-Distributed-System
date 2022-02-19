@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 import cs6650.model.LiftRide;
-import cs6650.util.ReportUtility;
+import cs6650.util.MetricsUtility;
 
 public class RequestRunner {
 
@@ -60,11 +60,11 @@ public class RequestRunner {
       int startSkierId = 0;//1 + (i * (numSkiers / (numThread)));
       int endSkierId = (i + 1) * (numSkiers / (numThread));
       int skierId = startSkierId + i;//ReportUtility.getRandomInt(startSkierId, endSkierId);
-      int time = ReportUtility.getRandomInt(startTime, endTime);
+      int time = MetricsUtility.getRandomInt(startTime, endTime);
       list.add(new ThreadRunner(desc, skierId, time, numRun, numLifts, url, partialCountDownLatch, totalCountDownLatch));
     }
 
-    long totalBefore = ReportUtility.getTime();
+    long totalBefore = MetricsUtility.getTime();
     list.parallelStream().forEach(Thread::start);
     partialCountDownLatch.await();
 
@@ -81,11 +81,11 @@ public class RequestRunner {
           // Wait for the total Count Down
           totalCountDownLatch.await();
 
-          long totalAfter = ReportUtility.getTime();
+          long totalAfter = MetricsUtility.getTime();
           double tps = numThread * numRun * Math.pow(10, 3) / (totalAfter - totalBefore);
-          System.out.printf("%s -> %d / %d (ms) = %f tps\n", desc, numThread * numRun, totalAfter - totalBefore, tps);
+          System.out.printf("%s : %d / %d (ms) = %f tps\n", desc, numThread * numRun, totalAfter - totalBefore, tps);
 
-          ReportUtility.flush(desc, desc + ".csv");
+          MetricsUtility.flush(desc, desc + ".csv");
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -109,6 +109,7 @@ public class RequestRunner {
   private class ThreadRunner extends Thread {
 
     private static final String URL_PARAM = "/skiers/999/seasons/20/days/1/skiers/%SKIER_ID%";
+
     private final Gson gson = new Gson();
 
     private final String desc;
@@ -149,13 +150,13 @@ public class RequestRunner {
           .build();
 
       for (int i = 0; i < numRun; i++) {
-        long before = ReportUtility.getTime();
-        String beforeHHMM = ReportUtility.convertTimeHHMMSS(before);
+        long before = MetricsUtility.getTime();
+        String beforeHHMM = MetricsUtility.convertTimeHHMMSS(before);
         HttpResponse<String> response = getStringHttpResponse(request);
-        long after = ReportUtility.getTime();
-        String afterHHMM = ReportUtility.convertTimeHHMMSS(after);
+        long after = MetricsUtility.getTime();
+        String afterHHMM = MetricsUtility.convertTimeHHMMSS(after);
         if (response != null) {
-          ReportUtility.append(desc, String.format("%s,%s,%d,%d,%d,%d,%s,%s,%s", new Date(), "GET", (after - before), response.statusCode(), before, after, beforeHHMM, afterHHMM, skierId));
+          MetricsUtility.append(desc, String.format("%s,%s,%d,%d,%d,%d,%s,%s,%s", new Date(), "GET", (after - before), response.statusCode(), before, after, beforeHHMM, afterHHMM, skierId));
         } else {
           System.err.printf("%s %d is failed with null response\n", desc, skierId);
         }
@@ -183,8 +184,8 @@ public class RequestRunner {
     }
 
     private String createRequestBody() {
-      int liftId = ReportUtility.getRandomInt(1, numLifts);
-      int waitTime = ReportUtility.getRandomInt(0, 10);
+      int liftId = MetricsUtility.getRandomInt(1, numLifts);
+      int waitTime = MetricsUtility.getRandomInt(0, 10);
       LiftRide liftRide = new LiftRide();
       liftRide.setLiftID(liftId);
       liftRide.setTime(time);

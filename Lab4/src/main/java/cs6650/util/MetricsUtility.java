@@ -13,9 +13,9 @@ import java.util.Random;
 import java.util.Vector;
 
 /**
- * Utility class for Report.
+ * Utility class for Metrics.
  */
-public class ReportUtility {
+public class MetricsUtility {
 
   private static final SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
   private static Random random = new Random();
