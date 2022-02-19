@@ -108,7 +108,7 @@ public class RequestRunner {
    */
   private class ThreadRunner extends Thread {
 
-    private static final String URL_PARAM = "/lab4/Skiers/999/seasons/20/days/1/skiers/%SKIER_ID%";
+    private static final String URL_PARAM = "/skiers/999/seasons/20/days/1/skiers/%SKIER_ID%";
     private final Gson gson = new Gson();
 
     private final String desc;
