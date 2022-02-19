@@ -1,4 +1,4 @@
-### CS6650 Project Space
+### CS6650 Project Space for skiers
 
 [![Deployment Status](https://github.com/normankong/cs6650-norman/actions/workflows/maven.yml/badge.svg)](https://github.com/normankong/cs6650-norman/actions/workflows/maven.yml)
 
@@ -26,3 +26,4 @@ sequenceDiagram
     note over Client, Server : Next phase will be started if 20% of the current phase is completed
         
 ```
+
