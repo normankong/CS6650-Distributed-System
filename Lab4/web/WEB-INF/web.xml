@@ -21,7 +21,7 @@
 
     <servlet-mapping>
         <servlet-name>SkierServlet</servlet-name>
-        <url-pattern>/Skiers/*</url-pattern>
+        <url-pattern>/skiers/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
