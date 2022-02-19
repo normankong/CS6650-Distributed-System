@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -47,6 +48,7 @@ func GetSkierDayVertical(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("invalid ID"))
 	}
+	
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -93,5 +95,7 @@ func WriteNewLiftRide(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	time.Sleep(1 * time.Second)
+
 	w.WriteHeader(http.StatusCreated)
 }
