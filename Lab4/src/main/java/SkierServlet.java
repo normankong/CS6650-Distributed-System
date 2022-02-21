@@ -38,7 +38,7 @@ public class SkierServlet extends HttpServlet {
 
 
     try {
-      Thread.sleep(1000);
+      Thread.sleep(Integer.parseInt(resortID));
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
