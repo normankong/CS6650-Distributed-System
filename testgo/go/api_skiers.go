@@ -66,7 +66,7 @@ func GetSkierResortTotals(w http.ResponseWriter, r *http.Request) {
 func WriteNewLiftRide(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	params := mux.Vars(r)
-	_, err := strconv.Atoi(params["resortID"])
+	resortID, err := strconv.Atoi(params["resortID"])
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("invalid ID"))
@@ -95,7 +95,7 @@ func WriteNewLiftRide(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	time.Sleep(1 * time.Second)
+	time.Sleep(time.Duration(resortID) * time.Millisecond)
 
 	w.WriteHeader(http.StatusCreated)
 }

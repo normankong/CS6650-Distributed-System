@@ -6,7 +6,7 @@ router.post('/:resortID/seasons/:seasonID/days/:dayID/skiers/:skierID', function
     res.status(201);
     setTimeout(() => {
         res.end();
-    }, 1000);
+    }, req.params.resortID);
 });
 
 router.get('/:resortID/seasons/:seasonID/days/:dayID/skiers/:skierID', function (req, res, next) {
