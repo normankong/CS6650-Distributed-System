@@ -1,0 +1,50 @@
+1
+Throughput : 1000/506 = 1976.284585 tps
+Throughput : 5000/1286 = 3888.024883 tps
+Throughput : 10000/2392 = 4180.602007 tps
+Throughput : 15000/23224 = 645.883569 tps
+Throughput : 20000/57358 = 348.687193 tps
+
+5
+Throughput : 1000/1386 = 721.500722 tps
+Throughput : 5000/1473 = 3394.433130 tps
+Throughput : 10000/2490 = 4016.064257 tps
+Throughput : 15000/28542 = 525.541308 tps
+Throughput : 20000/58462 = 342.102562 tps
+
+10
+Throughput : 1000/1513 = 660.938533 tps
+Throughput : 5000/1535 = 3257.328990 tps
+Throughput : 10000/2387 = 4189.359028 tps
+Throughput : 15000/25185 = 595.592615 tps
+Throughput : 20000/59409 = 336.649329 tps
+
+
+15
+Throughput : 1000/1767 = 565.930956 tps
+Throughput : 5000/1494 = 3346.720214 tps
+Throughput : 10000/2435 = 4106.776181 tps
+Throughput : 15000/28350 = 529.100529 tps
+Throughput : 20000/58560 = 341.530055 tps
+
+20
+Throughput : 1000/1663 = 601.322910 tps
+Throughput : 5000/1580 = 3164.556962 tps
+Throughput : 10000/2432 = 4111.842105 tps
+Throughput : 15000/23784 = 630.676085 tps
+Throughput : 20000/64736 = 308.947108 tps
+
+50
+Throughput : 1000/1597 = 626.174076 tps
+Throughput : 5000/1559 = 3207.184092 tps
+Throughput : 10000/2729 = 3664.345914 tps
+Throughput : 15000/23793 = 630.437524 tps
+Throughput : 20000/65156 = 306.955614 tps
+
+100
+Throughput : 1000/1793 = 557.724484 tps
+Throughput : 5000/1684 = 2969.121140 tps
+Throughput : 10000/2431 = 4113.533525 tps
+Throughput : 15000/23801 = 630.225621 tps
+Throughput : 20000/58473 = 342.038206 tps
+

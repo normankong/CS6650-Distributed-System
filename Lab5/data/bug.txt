@@ -1,0 +1,59 @@
+Server 1
+Throughput : 32000/34969 = 915.096228 tps
+Throughput : 64000/37864 = 1690.259877 tps
+Throughput : 128000/69786 = 1834.178775 tps
+Throughput : 256000/70680 = 3621.958121 tps
+Throughput : 512000/67938 = 7536.283082 tps
+Throughput : 1024000/100682 = 10170.636261 tps
+
+
+Server 32
+Throughput : 32000/71150 = 449.754041 tps
+Throughput : 64000/37157 = 1722.421078 tps
+Throughput : 128000/36435 = 3513.105530 tps
+Throughput : 256000/32035 = 7991.259560 tps
+Throughput : 512000/35447 = 14444.099642 tps
+Throughput : 1024000/93612 = 10938.768534 tps
+
+Server 64
+Throughput : 32000/37289 = 858.161924 tps
+Throughput : 64000/66283 = 965.556779 tps
+Throughput : 128000/69121 = 1851.825060 tps
+Throughput : 256000/37265 = 6869.716893 tps
+Throughput : 512000/129409 = 3956.448160 tps
+Throughput : 1024000/103773 = 9867.691982 tps
+
+Server 128
+Throughput : 32000/39344 = 813.338756 tps
+Throughput : 64000/31690 = 2019.564531 tps
+Throughput : 128000/37656 = 3399.192692 tps
+Throughput : 256000/68153 = 3756.254310 tps
+Throughput : 512000/69242 = 7394.356027 tps
+Throughput : 1024000/106336 = 9629.852543 tps
+
+Server 256
+Throughput : 32000/39466 = 810.824507 tps
+Throughput : 64000/38298 = 1671.105541 tps
+Throughput : 128000/34700 = 3688.760807 tps
+Throughput : 256000/62347 = 4106.051614 tps
+Throughput : 512000/69481 = 7368.921000 tps
+Throughput : 1024000/101079 = 10130.689856 tps
+
+
+Server 512
+Throughput : 32000/38917 = 822.262764 tps
+Throughput : 64000/37095 = 1725.299906 tps
+Throughput : 128000/63256 = 2023.523460 tps
+Throughput : 256000/39633 = 6459.263745 tps
+Throughput : 512000/97841 = 5232.980039 tps
+Throughput : 1024000/99264 = 10315.925210 tps
+
+
+Server 1024
+Throughput : 32000/39532 = 809.470808 tps
+Throughput : 64000/36426 = 1756.986768 tps
+Throughput : 128000/36562 = 3500.902576 tps
+Throughput : 256000/69075 = 3706.116540 tps
+Throughput : 512000/68513 = 7473.034315 tps
+Throughput : 1024000/69050 = 14829.833454 tps
+
