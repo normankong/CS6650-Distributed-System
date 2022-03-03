@@ -17,7 +17,7 @@ import cs6650.util.QueueUtility;
 
 public class RequestConsumer {
 
-  private static int THREAD_POOL = 5;
+  private static int THREAD_POOL = 10;
 
   public static void main(String[] argv) throws Exception {
     ConnectionFactory factory = new ConnectionFactory();
@@ -26,15 +26,10 @@ public class RequestConsumer {
     factory.setPassword(QueueUtility.RABBIT_PASSWORD);
 
     Connection connection = factory.newConnection();
-    Channel channel = connection.createChannel();
-    channel.basicQos(10);
-    channel.queueDeclare(QueueUtility.QUEUE_NAME, false, false, false, null);
-    //    channel.QueueDeclare(queue: "hello", durable: true, exclusive: false, autoDelete: false, arguments: null);
 
     ExecutorService threadExecutor = Executors.newFixedThreadPool(THREAD_POOL);
 
-    int prefetchCount = 1;
-    new Worker(prefetchCount, threadExecutor, connection.createChannel(), QueueUtility.QUEUE_NAME);
+    new Worker(100, threadExecutor, connection.createChannel(), QueueUtility.QUEUE_NAME);
 
     System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
   }
@@ -54,8 +49,6 @@ public class RequestConsumer {
       this.channel = channel;
       this.channel.basicQos(prefetch);
       this.executorService = threadExecutor;
-
-      // this.channel.basicConsume(queue, true, new RabbitDeliverCallback(), new RabbitCancelCallback());
       this.channel.basicConsume(queue, true, this);
     }
 

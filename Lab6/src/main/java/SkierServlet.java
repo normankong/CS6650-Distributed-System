@@ -17,15 +17,18 @@ import com.rabbitmq.client.ConnectionFactory;
 import cs6650.model.LiftRide;
 import cs6650.model.SkierVertical;
 import cs6650.model.SkierVerticalResorts;
+import cs6650.util.ChannelObjectFactory;
 import cs6650.util.QueueUtility;
 import cs6650.util.ServletUtility;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.json.simple.JSONValue;
 
 @WebServlet(name = "SkierServlet", value = "/SkierServlet")
 public class SkierServlet extends HttpServlet {
 
   private ConnectionFactory factory;
-  private Channel channel;
+  private ObjectPool<Channel> pool;
 
   @Override
   public void init() throws ServletException {
@@ -39,8 +42,7 @@ public class SkierServlet extends HttpServlet {
 
     try {
       Connection connection = factory.newConnection();
-      channel = connection.createChannel();
-      channel.queueDeclare(QueueUtility.QUEUE_NAME, false, false, false, null);
+      pool = new GenericObjectPool<>(new ChannelObjectFactory(connection));
     } catch (IOException | TimeoutException e) {
       e.printStackTrace();
     }
@@ -81,14 +83,14 @@ public class SkierServlet extends HttpServlet {
 
     // Only Trigger RabbitMQ if Resort ID is 999999999
     if (resortID.equals("999999999")) {
-//      try (
-//          Connection connection = factory.newConnection();
-//          Channel channel = connection.createChannel()) {
-//        channel.queueDeclare(QueueUtility.QUEUE_NAME, false, false, false, null);
+      try {
+        Channel channel = pool.borrowObject();
         channel.basicPublish("", QueueUtility.QUEUE_NAME, null, jsonText.getBytes(StandardCharsets.UTF_8));
-//      } catch (IOException | TimeoutException e) {
-//        e.printStackTrace();
-//      }
+        pool.returnObject(channel);
+        System.out.printf("Connection Pool : %d vs %d\n", pool.getNumActive(), pool.getNumIdle());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
 
     // Sleep Seasons ID ms
