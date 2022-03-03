@@ -22,20 +22,20 @@ jobs:
         cache: maven
         
     - name: Build with Maven
-      working-directory: Lab4
+      working-directory: Lab6
       run: mvn -B package --file pom.xml
 
     - name: Build with Maven
-      working-directory: Lab4
+      working-directory: Lab6
       run: mvn -B package --file pom.xml
       
     - name: Build War File for
-      working-directory: Lab4
+      working-directory: Lab6
       run: mvn --file pom.xml compile war:war
 
     - name: Rename artifact
       working-directory: 
-      run: mv Lab4/target/lab4.war lab4.war
+      run: mv Lab6/target/MyApp.war MyApp.war
 
     - name: SCP File to AWS
       uses: appleboy/scp-action@master
@@ -44,5 +44,5 @@ jobs:
         username: ${{ secrets.USERNAME }}
         port: ${{ secrets.PORT }}
         key: ${{ secrets.KEY }}
-        source: "lab4.war"
+        source: "MyApp.war"
         target: "/usr/share/apache-tomcat-9.0.39/webapps"

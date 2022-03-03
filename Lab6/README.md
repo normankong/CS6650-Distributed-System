@@ -60,6 +60,6 @@ done
 scp -i ~/vockey.pem out/artifacts/MyApp/MyApp.war tomcat@18.235.121.1:/usr/share/apache-tomcat-9.0.39/webapps  
 ```
 
-
+### Tmux cheatsheet
 control+b "
 resize-pane -D 4
