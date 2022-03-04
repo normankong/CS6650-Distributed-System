@@ -1,4 +1,4 @@
-# Lab 6
+# Lab 7
 
 ## Installation Guide
 ## 1) Follow this guide to install the binary
