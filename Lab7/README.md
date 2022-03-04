@@ -1,4 +1,4 @@
-# Lab 7
+# Lab 6
 
 ## Installation Guide
 ## 1) Follow this guide to install the binary
@@ -30,8 +30,6 @@ echo Open browser and login as test/test
     factory.setHost(New Host);
     factory.setUsername("test");
     factory.setPassword("test");
-
-
 
 ### Telemetry
 -javaagent:opentelemetry-javaagent.jar -Dotel.service.name=Lab4-Client
@@ -67,7 +65,7 @@ resize-pane -D 4
 #
 # TABLE STRUCTURE FOR: LiftRides
 #
-
+```sql
 CREATE TABLE `LiftRides` (
 `skierId` int(11) NOT NULL,
 `resortId` int(11)  NOT NULL,
@@ -77,13 +75,24 @@ CREATE TABLE `LiftRides` (
 `liftId` int(11) NOT NULL,
 `waitTime` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
 
+# Get the RDS Information
+```shell
+aws rds describe-db-instances | jq '.DBInstances[0] | {username : .MasterUsername, database : .DBName, hostname : .Endpoint.Address}'
+```
 
 # Install Mysql Client on Amazon OS
+```shell
 sudo yum install mariadb -y
+```
 
 # Install Mysql Client on Ubuntu OS
+```shell
 sudo apt install mysql-client-core-8.0
+```
 
 # Connect DB
-mysql -h neu-database.c93msbykaob9.us-east-1.rds.amazonaws.com -u admin -pXXXXXXX neu_6650 
+```shell
+mysql -h neu-database.c93msbykaob9.us-east-1.rds.amazonaws.com -u admin -pXXXXXXX neu_6650
+```
