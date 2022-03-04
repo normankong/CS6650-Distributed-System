@@ -86,4 +86,4 @@ sudo yum install mariadb -y
 sudo apt install mysql-client-core-8.0
 
 # Connect DB
-mysql -h neu-database.c93msbykaob9.us-east-1.rds.amazonaws.com -u admin -pnortheastern neu_6650 
+mysql -h neu-database.c93msbykaob9.us-east-1.rds.amazonaws.com -u admin -pXXXXXXX neu_6650 
