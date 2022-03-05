@@ -27,10 +27,10 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 public class SkierServlet extends HttpServlet {
 
   private ObjectPool<Channel> pool;
-
-  private EventCountCircuitBreaker breaker;
-
   private ConnectionFactory factory;
+
+  private EventCountCircuitBreaker faultBreaker;
+  private EventCountCircuitBreaker rateBreaker;
 
   @Override
   public void init() throws ServletException {
@@ -39,7 +39,8 @@ public class SkierServlet extends HttpServlet {
     System.out.println("Init Skier Servlet");
 
     // Init Circuit Breaker
-    breaker = new EventCountCircuitBreaker(5, 2, TimeUnit.MINUTES, 5, 1, TimeUnit.MINUTES);
+    faultBreaker = new EventCountCircuitBreaker(5, 1, TimeUnit.MINUTES, 5, 1, TimeUnit.MINUTES);
+    rateBreaker = new EventCountCircuitBreaker(1000, 1, TimeUnit.SECONDS, 800);
 
     // Init Rabbit MQ Object Pool
     try {
@@ -47,7 +48,7 @@ public class SkierServlet extends HttpServlet {
       factory.setHost(QueueUtility.RABBIT_SERVER);
       factory.setUsername(QueueUtility.RABBIT_USERNAME);
       factory.setPassword(QueueUtility.RABBIT_PASSWORD);
-      factory.setConnectionTimeout(3000);
+      factory.setConnectionTimeout(5000);
 
       initConnectionPool();
     } catch (IOException | TimeoutException e) {
@@ -56,7 +57,7 @@ public class SkierServlet extends HttpServlet {
   }
 
   private void initConnectionPool() throws IOException, TimeoutException {
-    if (pool == null){
+    if (pool == null) {
       Connection connection = factory.newConnection();
       pool = new GenericObjectPool<>(new ChannelObjectFactory(connection));
     }
@@ -87,8 +88,17 @@ public class SkierServlet extends HttpServlet {
 
     System.out.printf("Incoming request : %s\n", jsonText);
 
-    // Only Trigger RabbitMQ if Resort ID is 999999999
-    if (breaker.checkState()) {
+    // Rate Breaker
+    if (!rateBreaker.incrementAndCheckState()) {
+      res.setContentType("text/plain");
+      res.setStatus(429);
+      res.addHeader("Retry-After", "10");
+      res.getWriter().write("Rate Limit Exceeds, retry after 10s");
+      return;
+    }
+
+    // Fault Breaker
+    if (faultBreaker.checkState()) {
       try {
         initConnectionPool();
         Channel channel = pool.borrowObject();
@@ -101,7 +111,7 @@ public class SkierServlet extends HttpServlet {
         return;
 
       } catch (Exception ex) {
-        breaker.incrementAndCheckState();
+        faultBreaker.incrementAndCheckState();
         ex.printStackTrace();
         res.setContentType(ServletUtility.APPLICATION_JSON);
         res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
