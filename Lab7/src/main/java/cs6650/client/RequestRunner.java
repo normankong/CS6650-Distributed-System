@@ -167,6 +167,14 @@ public class RequestRunner {
       for (int i = 0; i < 5; i++) {
         try {
           HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+          if (response.statusCode() == 429 || response.statusCode() == 503) {
+            int retryAfter = Integer.parseInt(response.headers().allValues("Retry-After").get(0));
+            System.out.printf("%s %d encounter %d, retry after : %d second\n", desc, skierId, response.statusCode(), retryAfter);
+            Thread.sleep(500);
+            i--;
+            continue;
+          }
           if (response.statusCode() != 201) {
             System.err.printf("%s %d failed with response code : %s\n", desc, skierId, response.statusCode());
           }

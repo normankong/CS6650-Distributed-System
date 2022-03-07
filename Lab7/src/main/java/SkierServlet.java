@@ -32,6 +32,15 @@ public class SkierServlet extends HttpServlet {
   private EventCountCircuitBreaker faultBreaker;
   private EventCountCircuitBreaker rateBreaker;
 
+  private static final int RATE_LIMIT_HARD_LIMIT = Integer.parseInt(System.getProperty("RATE_LIMIT_HARD_LIMIT"));
+  private static final int RATE_LIMIT_SOFT_LIMIT = Integer.parseInt(System.getProperty("RATE_LIMIT_SOFT_LIMIT"));
+  private static final int RATE_LIMIT_RATE_PERIOD = Integer.parseInt(System.getProperty("RATE_LIMIT_RATE_PERIOD"));
+
+  private static final int FAULT_OPEN_THRESHOLD = Integer.parseInt(System.getProperty("FAULT_OPEN_THRESHOLD"));
+  private static final int FAULT_CLOSE_THRESHOLD = Integer.parseInt(System.getProperty("FAULT_CLOSE_THRESHOLD"));
+  private static final int FAULT_OPEN_PERIOD = Integer.parseInt(System.getProperty("FAULT_OPEN_PERIOD"));
+  private static final int FAULT_CLOSE_PERIOD = Integer.parseInt(System.getProperty("FAULT_CLOSE_PERIOD"));
+
   @Override
   public void init() throws ServletException {
     super.init();
@@ -39,8 +48,8 @@ public class SkierServlet extends HttpServlet {
     System.out.println("Init Skier Servlet");
 
     // Init Circuit Breaker
-    faultBreaker = new EventCountCircuitBreaker(5, 1, TimeUnit.MINUTES, 5, 1, TimeUnit.MINUTES);
-    rateBreaker = new EventCountCircuitBreaker(1000, 1, TimeUnit.SECONDS, 800);
+    faultBreaker = new EventCountCircuitBreaker(FAULT_OPEN_THRESHOLD, FAULT_OPEN_PERIOD, TimeUnit.SECONDS, FAULT_CLOSE_THRESHOLD, FAULT_CLOSE_PERIOD, TimeUnit.SECONDS);
+    rateBreaker = new EventCountCircuitBreaker(RATE_LIMIT_HARD_LIMIT, RATE_LIMIT_RATE_PERIOD, TimeUnit.SECONDS, RATE_LIMIT_SOFT_LIMIT);
 
     // Init Rabbit MQ Object Pool
     try {
@@ -54,6 +63,21 @@ public class SkierServlet extends HttpServlet {
     } catch (IOException | TimeoutException e) {
       e.printStackTrace();
     }
+  }
+
+  @Override
+  protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+
+    // Rate Breaker
+    if (!rateBreaker.incrementAndCheckState()) {
+      res.setContentType("text/plain");
+      res.setStatus(429);
+      res.addHeader("Retry-After", "1");
+      res.getWriter().write("Rate Limit Exceeds, retry after 10s");
+      return;
+    }
+
+    super.service(req, res);
   }
 
   private void initConnectionPool() throws IOException, TimeoutException {
@@ -88,15 +112,6 @@ public class SkierServlet extends HttpServlet {
 
     System.out.printf("Incoming request : %s\n", jsonText);
 
-    // Rate Breaker
-    if (!rateBreaker.incrementAndCheckState()) {
-      res.setContentType("text/plain");
-      res.setStatus(429);
-      res.addHeader("Retry-After", "10");
-      res.getWriter().write("Rate Limit Exceeds, retry after 10s");
-      return;
-    }
-
     // Fault Breaker
     if (faultBreaker.checkState()) {
       try {
@@ -111,18 +126,24 @@ public class SkierServlet extends HttpServlet {
         return;
 
       } catch (Exception ex) {
-        faultBreaker.incrementAndCheckState();
+
         ex.printStackTrace();
+
+        boolean willClose = faultBreaker.incrementAndCheckState();
+        if (willClose){
+          System.out.println("Fault circuit starts to break now");
+        }
         res.setContentType(ServletUtility.APPLICATION_JSON);
         res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        res.getWriter().write(String.format("Fault circuit status : \n" + willClose));
         res.getWriter().write(ex.getMessage());
         return;
       }
     } else {
-      // return an error code, use an alternative service, etc.
       res.setContentType(ServletUtility.APPLICATION_JSON);
       res.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-      res.getWriter().write("Circuit Breaking");
+      res.addHeader("Retry-After", "1");
+      res.getWriter().write("Fault circuit is broken");
       return;
     }
   }

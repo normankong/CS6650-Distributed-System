@@ -96,3 +96,10 @@ sudo apt install mysql-client-core-8.0
 ```shell
 mysql -h neu-database.c93msbykaob9.us-east-1.rds.amazonaws.com -u admin -pXXXXXXX neu_6650
 ```
+
+# Ali CLI
+```shell
+ulimit -Sn 14096 && ulimit -Sl unlimited
+URL=http://cs6650-alb-119407693.us-east-1.elb.amazonaws.com:8080/MyApp/skiers/12/seasons/2019/days/1/skiers/123
+ali -H "Accept: application/json" -H "Content-type: application/json" --body-file=json.txt --method=POST $URL --rate=3000 --duration=30s
+```
