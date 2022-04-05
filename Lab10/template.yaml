@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: sam-milestone3-skier
+Transform:
+- AWS::Serverless-2016-10-31
+
+Metadata:
+  AWS::CloudFormation::Interface:
+   ParameterGroups:
+     - Label: {default: 'Optional parameters'}
+       Parameters:
+         - ProjectName
+
+Parameters:
+  ProjectName:
+   Type: String
+   Description: 'Name of the project'
+   Default: 'sam-milestone'
+
+Resources:
+
+  # Define Topic
+  SkierTopic:
+   Type: AWS::SNS::Topic
+   Properties:
+     TopicName: !Sub '${ProjectName}'
+     Subscription:
+       - Protocol: sqs
+         Endpoint: !GetAtt SkierQueue.Arn
+     Tags:
+       - Key: Name
+         Value: !Sub '${ProjectName}'
+   
+  # Define the SQS queue
+  SkierQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${ProjectName}'
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}'
+
+  # Define SNS to SQS Policy
+  SnsToSqsPolicy:
+    Type: AWS::SQS::QueuePolicy      
+    Properties:    
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "Allow SNS publish to SQS"
+            Effect: Allow
+            Principal: 
+              Service: "sns.amazonaws.com"
+            Resource: !GetAtt SkierQueue.Arn
+            Action: SQS:SendMessage
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref SkierTopic
+      Queues:
+        - Ref: SkierQueue
+
+  # Define lambda and API Gateway
+  SkierFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${ProjectName}-request'
+      Description: Skier Producer
+      Handler: producer/app.handler
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      # Role: arn:aws:iam::308529692548:role/LabRole
+      Policies: 
+        - AWSLambdaBasicExecutionRole
+        - AmazonSNSFullAccess
+      Environment:
+        Variables:
+          TOPIC: !Ref SkierTopic
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /{RESORT_ID}/seasons/{SEASON_ID}/days/{DAY_ID}/skiers/{SKIER_ID}
+            Method: POST
+
+  # Define the Dynamo DB
+  SkierTable: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: symbol
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: symbol
+          KeyType: HASH
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5 
+        WriteCapacityUnits: 5 
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+
+  # Skier Consumer
+  SkierConsumer:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${ProjectName}-consumer'
+      Description: Skier Consumer
+      Handler: consumer/app.handler
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 15
+      Policies: 
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SkierTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref SkierTable
+      Events:
+        SqsTrigger:
+          Type: SQS
+          Properties:
+            Queue : !GetAtt SkierQueue.Arn
+
+Outputs:
+  WebEndpoint:
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+  QueueInfo:
+    Description: "Quene Info"
+    Value:  !GetAtt SkierQueue.Arn
+  TableInfo:
+    Description: "Table Info"
+    Value:  !Ref SkierTable
+
+    
